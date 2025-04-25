@@ -31,7 +31,7 @@ export default class UserController {
             const password = await hashPassword(userRequest.password)
             const user = await this.userService.create({ ...userRequest, password: password })
             const token = signToken({ ...user.toObject(), password: undefined })
-            res.status(200).json({ user: { ...user.toObject(), password: undefined }, token })
+            res.status(201).json({ user: { ...user.toObject(), password: undefined }, token })
         } catch (error) {
             console.log(error)
             res.status(500).json({ message: "internal server error" })
@@ -59,5 +59,28 @@ export default class UserController {
             console.log(error)
             res.status(500).json({ message: "internal server error" })
         }
+    }
+    async adminLogin(req: Request, res: Response) {
+        try {
+            const userRequest = req.body as IUser
+            const findUser = await this.userService.findOne({ email: userRequest.email })
+            if (!findUser) {
+                res.status(404).json({ message: "admin user not found" })
+                return
+            }
+            if (findUser.role === "user") {
+                res.status(403).json({ message: "you dont have access here buddy" })
+                return
+            }
+            if (!await comparePassword(userRequest.password, findUser.password)) {
+                res.status(401).json({ message: 'invalid credentials buddy' })
+                return
+            }
+            res.status(200).json({ message: 'success', user: { ...findUser.toObject(), password: undefined } })
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ message: "internal server error" })
+        }
+
     }
 }

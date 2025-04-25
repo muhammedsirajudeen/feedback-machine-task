@@ -15,6 +15,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { StarRating } from "@/components/star-rating"
 import { checkUser } from "@/lib/checkUser"
 import axiosInstance from "@/lib/axiosInstance"
+import { toast } from "sonner"
+import { ToastStyles } from "@/lib/utils"
 
 export default function SubmitFeedbackPage() {
   const router = useRouter()
@@ -86,7 +88,7 @@ export default function SubmitFeedbackPage() {
       const response=await axiosInstance.post('/feedback',formData)
       console.log(response)
       console.log("Feedback submitted:", { title, description, rating, image })
-
+      toast.success(<p className="text-white" >feedback added</p>,ToastStyles.success)
       // Reset form
       setTitle("")
       setDescription("")
@@ -211,6 +213,13 @@ export default function SubmitFeedbackPage() {
                 </Button>
               </div>
             </form>
+              <div className="w-full flex justify-center mt-4">
+                <Button variant="outline" onClick={()=>{
+                  router.push('/feedback')
+                }}  >
+                  Your feebacks
+                </Button>
+              </div>
           </CardContent>
         </Card>
       </div>

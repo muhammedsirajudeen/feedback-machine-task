@@ -33,7 +33,7 @@ const FeedbackSchema: Schema = new Schema<Feedback>(
         date: { type: String, required: false, default: Date() },
         user: { type: mongoose.Schema.ObjectId, required: true, ref: 'User' },
         image: { type: String, default: null },
-        status: { type: String, required: false, default: "pending" },
+        status: { type: String, required: false, default: "New" },
         comments: { type: [CommentSchema], default: [] },
     },
     {

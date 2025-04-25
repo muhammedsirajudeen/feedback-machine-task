@@ -11,8 +11,8 @@ export default function Home() {
             <Link href="/login">
               <Button variant="outline">Login</Button>
             </Link>
-            <Link href="/admin">
-              <Button>Admin Panel</Button>
+            <Link href="/adminlogin">
+              <Button>Admin Login</Button>
             </Link>
           </div>
         </div>

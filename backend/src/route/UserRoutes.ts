@@ -7,5 +7,5 @@ const userController: UserController = container.resolve('UserController')
 
 userRouter.post('/create', userController.createUser.bind(userController))
 userRouter.get('/verify', userController.verifyUser.bind(userController))
-
+userRouter.post('/admin/login', userController.adminLogin.bind(userController))
 export default userRouter
