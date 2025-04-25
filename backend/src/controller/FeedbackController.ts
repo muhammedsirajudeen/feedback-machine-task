@@ -5,6 +5,7 @@ import { IUser } from "../model/User";
 import { FeedbackRepository } from "../repository/FeedbackRepository";
 import { Feedback } from "../model/Feedback";
 import mongoose, { isObjectIdOrHexString, Model } from "mongoose";
+import { generateSuggestionsAi } from "../utils/suggestionHelper";
 export interface CustomRequest extends Request {
     user?: IUser
 }
@@ -92,6 +93,19 @@ export class FeedbackController {
         } catch (error) {
             console.log(error)
             res.status(500).json({ message: "internal server error" })
+        }
+    }
+    async getSuggestions(req: Request, res: Response) {
+        try {
+            const { description } = req.body
+            if (!description) {
+                res.status(400).json({ message: 'description not provided' })
+            }
+            const suggestions = await generateSuggestionsAi(description)
+            res.status(200).json({ message: "success", suggestions })
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ messsage: 'internal server error' })
         }
     }
 }
