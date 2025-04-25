@@ -60,6 +60,32 @@ export default class UserController {
             res.status(500).json({ message: "internal server error" })
         }
     }
+    async verifyAdmin(req: Request, res: Response) {
+        try {
+            const token = req.headers.authorization
+            if (!token) {
+                res.status(401).json({ message: "token not there" })
+                return
+            }
+            const user = verifyToken(token) as IUser
+            if (!user) {
+                res.status(401).json({ message: "invalid token" })
+                return
+            }
+            const findUser = await this.userService.findById(user._id as string)
+            if (!findUser) {
+                res.status(404).json({ message: "user not found" })
+                return
+            }
+            if (findUser.role !== "admin") {
+                res.status(403).json({ message: "you dont have access buddy" })
+            }
+            res.status(200).json({ user: { ...findUser?.toObject(), password: undefined } })
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ message: "internal server error" })
+        }
+    }
     async adminLogin(req: Request, res: Response) {
         try {
             const userRequest = req.body as IUser

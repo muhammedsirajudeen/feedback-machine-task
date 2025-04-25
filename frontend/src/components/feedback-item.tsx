@@ -93,16 +93,19 @@ export function FeedbackItem({ feedback, onStatusChange, onAddComment,admin }: F
             )}
 
             <div className="flex items-center justify-between">
-              <Select value={feedback.status} onValueChange={(value) => onStatusChange(feedback._id, value)}>
-                <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="Update status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="new">New</SelectItem>
-                  <SelectItem value="in-progress">In Progress</SelectItem>
-                  <SelectItem value="resolved">Resolved</SelectItem>
-                </SelectContent>
-              </Select>
+              {
+                admin &&
+                <Select value={feedback.status} onValueChange={(value) => onStatusChange(feedback._id, value)}>
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue placeholder="Update status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="new">New</SelectItem>
+                    <SelectItem value="in-progress">In Progress</SelectItem>
+                    <SelectItem value="resolved">Resolved</SelectItem>
+                  </SelectContent>
+                </Select>
+              }
 
               <Collapsible open={showComments} onOpenChange={setShowComments}>
                 <CollapsibleTrigger asChild>

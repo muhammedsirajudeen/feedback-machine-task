@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@google/generative-ai':
+        specifier: ^0.24.0
+        version: 0.24.0
       bcryptjs:
         specifier: ^3.0.2
         version: 3.0.2
@@ -221,6 +224,10 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@google/generative-ai@0.24.0':
+    resolution: {integrity: sha512-fnEITCGEB7NdX0BhoYZ/cq/7WPZ1QS5IzJJfC3Tg/OwkvBetMiVJciyaan297OvE4B9Jg1xvo0zIazX/9sGu1Q==}
+    engines: {node: '>=18.0.0'}
 
   '@mongodb-js/saslprep@1.2.2':
     resolution: {integrity: sha512-EB0O3SCSNRUFk66iRCpI+cXzIjdswfCs7F6nOC3RAGJ7xr5YhaicvsRwJ9eyzYvYRlCSDUO/c7g4yNulxKC1WA==}
@@ -987,6 +994,8 @@ snapshots:
 
   '@esbuild/win32-x64@0.25.3':
     optional: true
+
+  '@google/generative-ai@0.24.0': {}
 
   '@mongodb-js/saslprep@1.2.2':
     dependencies:

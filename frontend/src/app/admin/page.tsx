@@ -15,6 +15,7 @@ import axiosInstance from "@/lib/axiosInstance"
 import { toast } from "sonner"
 import { ToastStyles } from "@/lib/utils"
 import { useRouter } from "next/navigation"
+import { AxiosError } from "axios"
 
 
 
@@ -30,7 +31,24 @@ export default function AdminPage() {
   const [error, setError] = useState("")
 
   useEffect(() => {
+    async function adminChecker(){
+      try {
+        await axiosInstance.get('/user/verify/admin')
+        feedbackFetcher()
 
+      } catch (error) {
+        const axiosError=error as AxiosError
+        if(axiosError.status===404){
+          router.push('/login')
+        }else if (axiosError.status===403){
+          router.push('/login')
+        }else{
+          router.push('/')
+        }
+        console.log(error)
+      }
+    }
+    adminChecker()
     async function feedbackFetcher() {
       try {
         const response = await axiosInstance.get('/feedback')
@@ -42,9 +60,8 @@ export default function AdminPage() {
         setError('please try again')
       }
     }
-    feedbackFetcher()
 
-  }, [])
+  }, [router])
 
   useEffect(() => {
     // Apply filters and sorting
