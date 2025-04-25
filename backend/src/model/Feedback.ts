@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Types } from 'mongoose'
+import mongoose, { Schema, Document, Types, ObjectId } from 'mongoose'
 
 interface Comment {
     text: string
@@ -11,7 +11,7 @@ export interface Feedback extends Document {
     description: string
     rating: number
     date: string
-    user: string
+    user: ObjectId
     image: string | null
     status: string
     comments: Comment[]
@@ -30,10 +30,10 @@ const FeedbackSchema: Schema = new Schema<Feedback>(
         title: { type: String, required: true },
         description: { type: String, required: true },
         rating: { type: Number, required: true },
-        date: { type: String, required: true },
-        user: { type: String, required: true },
+        date: { type: String, required: false, default: Date() },
+        user: { type: mongoose.Schema.ObjectId, required: true, ref: 'User' },
         image: { type: String, default: null },
-        status: { type: String, required: true },
+        status: { type: String, required: false, default: "pending" },
         comments: { type: [CommentSchema], default: [] },
     },
     {
