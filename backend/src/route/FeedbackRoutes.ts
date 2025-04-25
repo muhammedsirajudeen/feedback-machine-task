@@ -10,6 +10,6 @@ FeedbackRoutes.post('/', userMiddleware, upload.single('image'), feedbackControl
 FeedbackRoutes.get('/', adminMiddleware, feedbackController.getFeedbacks.bind(feedbackController))
 FeedbackRoutes.get('/user', userMiddleware, feedbackController.getFeedbacksUser.bind(feedbackController))
 FeedbackRoutes.patch('/status/:feedbackId', adminMiddleware, feedbackController.ToggleStatus.bind(feedbackController))
-FeedbackRoutes.put('/comment/:feedbackId', adminMiddleware, feedbackController.addComment.bind(feedbackController))
+FeedbackRoutes.put('/comment/:feedbackId', userMiddleware, feedbackController.addComment.bind(feedbackController))
 export default FeedbackRoutes
 

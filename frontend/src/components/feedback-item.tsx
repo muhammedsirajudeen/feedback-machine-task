@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { formatDistanceToNow } from "date-fns"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Feedback } from "@/types/Feedback"
 import Image from "next/image"
+import GlobalContext from "@/provider/GlobalContext"
 
 
 
@@ -20,12 +21,13 @@ interface FeedbackItemProps {
   feedback: Feedback
   onStatusChange: (id: string, status: string) => void
   onAddComment: (id: string, comment: string) => void
+  admin?:true
 }
 
-export function FeedbackItem({ feedback, onStatusChange, onAddComment }: FeedbackItemProps) {
+export function FeedbackItem({ feedback, onStatusChange, onAddComment,admin }: FeedbackItemProps) {
   const [newComment, setNewComment] = useState("")
   const [showComments, setShowComments] = useState(false)
-
+  const {user}=useContext(GlobalContext)
   const getStatusColor = (status: string) => {
     switch (status) {
       case "new":
@@ -125,7 +127,13 @@ export function FeedbackItem({ feedback, onStatusChange, onAddComment }: Feedbac
                   {feedback.comments.map((comment) => (
                     <div key={comment._id} className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
                       <div className="flex justify-between mb-1">
-                        <span className="font-medium">Admin</span>
+                        {
+                          admin ?
+                          <span className="font-medium">{comment.author.email===user?.email ? "You":"User"}</span>
+
+                          :
+                          <span className="font-medium">{comment.author.email===user?.email ? "User":"Admin"}</span>
+                        }
                         <span className="text-xs text-gray-500 dark:text-gray-400">
                           {formatDistanceToNow(new Date(comment.date), { addSuffix: true })}
                         </span>

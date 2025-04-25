@@ -33,7 +33,7 @@ export default function AdminPage() {
 
     async function feedbackFetcher() {
       try {
-        const response = await axiosInstance.get('/feedback')
+        const response = await axiosInstance.get('/feedback/user')
         console.log(response.data)
         setFeedback(response.data.feedbacks ?? [])
         setIsLoading(false)
@@ -120,18 +120,10 @@ export default function AdminPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4">
       <div className="container mx-auto max-w-6xl">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
           <div className="flex gap-4">
-            <Link href="/">
+            <Link href="/submit-feedback">
               <Button variant="outline">Back to Home</Button>
             </Link>
-            <Button onClick={()=>{
-              localStorage.removeItem("token")
-              router.push('/adminlogin')
-
-            }} >
-              Logout
-            </Button>
           </div>
         </div>
 
@@ -228,7 +220,6 @@ export default function AdminPage() {
                   <div className="grid gap-4">
                     {filteredFeedback.map((item) => (
                       <FeedbackItem
-                        admin={true}
                         key={item._id}
                         feedback={item}
                         onStatusChange={handleStatusChange}

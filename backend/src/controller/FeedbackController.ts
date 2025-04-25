@@ -31,7 +31,7 @@ export class FeedbackController {
 
     async getFeedbacks(req: Request, res: Response) {
         try {
-            const feedbacks = await this.feedbackModel.find().populate([{ path: 'user', select: '-password' }, { path: 'user.comments.author', select: '-password' }])
+            const feedbacks = await this.feedbackModel.find().populate([{ path: 'user', select: '-password' }, { path: 'comments.author', select: '-password' }])
             console.log(feedbacks)
             res.status(200).json({ message: "success", feedbacks })
         } catch (error) {
@@ -76,7 +76,7 @@ export class FeedbackController {
             //@ts-expect-error too lazy to type user id
             feedback.comments.push({ text: comment, author: user?._id })
             await feedback.save()
-            const newfeedback = await this.feedbackModel.findById(feedbackId).populate([{ path: 'user', select: '-password' }, { path: 'user.comments.author', select: '-password' }])
+            const newfeedback = await this.feedbackModel.findById(feedbackId).populate([{ path: 'user', select: '-password' }, { path: 'comments.author', select: '-password' }])
             res.status(200).json({ message: "success", feedback: newfeedback })
         } catch (error) {
             console.log(error)
@@ -86,7 +86,7 @@ export class FeedbackController {
     async getFeedbacksUser(req: CustomRequest, res: Response) {
         try {
             const user = req.user
-            const feedbacks = await this.feedbackModel.find({ user: user?._id }).populate([{ path: 'user', select: '-password' }, { path: 'user.comments.author', select: '-password' }])
+            const feedbacks = await this.feedbackModel.find({ user: user?._id }).populate([{ path: 'user', select: '-password' }, { path: 'comments.author', select: '-password' }])
             console.log(feedbacks)
             res.status(200).json({ message: "success", feedbacks })
         } catch (error) {

@@ -4,7 +4,7 @@ export interface Comment {
     _id: string
     text: string
     date: string
-    author: string
+    author: User
 }
 
 export interface Feedback {
