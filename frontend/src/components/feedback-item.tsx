@@ -14,6 +14,10 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Feedback } from "@/types/Feedback"
 import Image from "next/image"
 import GlobalContext from "@/provider/GlobalContext"
+import axiosInstance from "@/lib/axiosInstance"
+import { toast } from "sonner"
+import { ToastStyles } from "@/lib/utils"
+import { SuggestionComponent } from "./suggestion-component"
 
 
 
@@ -27,7 +31,22 @@ interface FeedbackItemProps {
 export function FeedbackItem({ feedback, onStatusChange, onAddComment,admin }: FeedbackItemProps) {
   const [newComment, setNewComment] = useState("")
   const [showComments, setShowComments] = useState(false)
+  const [suggestions,setSuggestions]=useState<string[]>([])
   const {user}=useContext(GlobalContext)
+  const [loading,setLoading]=useState(false)
+  async function getSuggestions(text:string){
+    try {
+      setLoading(true)
+      const response=await axiosInstance.post('/feedback/suggestions',{description:text})
+      console.log(response.data)   
+      setSuggestions(response.data.suggestions.slice(0,3))
+    } catch (error) {
+      console.log(error)
+    }
+    finally{
+      setLoading(false)
+    }
+  }
   const getStatusColor = (status: string) => {
     switch (status) {
       case "new":
@@ -48,6 +67,10 @@ export function FeedbackItem({ feedback, onStatusChange, onAddComment,admin }: F
   const handleSubmitComment = () => {
     onAddComment(feedback._id, newComment)
     setNewComment("")
+  }
+  const handleSuggestion=(suggestion:string)=>{
+    setNewComment(suggestion)
+    toast.success(<p className="text-white" >suggestion loaded</p>,ToastStyles.success)
   }
 
   return (
@@ -142,6 +165,7 @@ export function FeedbackItem({ feedback, onStatusChange, onAddComment,admin }: F
                         </span>
                       </div>
                       <p className="text-sm">{comment.text}</p>
+
                     </div>
                   ))}
                 </div>
@@ -149,7 +173,28 @@ export function FeedbackItem({ feedback, onStatusChange, onAddComment,admin }: F
             ) : (
               <div className="w-full mb-4 text-center text-gray-500 dark:text-gray-400 py-4">No comments yet</div>
             )}
-
+            {/* {
+              suggestions.map((suggestion,index)=>{
+                return(
+                  <Button onClick={()=>handleSuggestion(suggestion)} key={index} >{suggestion}</Button>
+                )
+              })
+            }
+            {
+              admin &&
+              <Button disabled={loading} className="mb-4"  onClick={()=>getSuggestions(feedback.description)} >
+                {
+                  loading ? "Loading..." :"Get Suggestions"
+                }
+              </Button>
+            } */}
+            <SuggestionComponent
+              suggestions={suggestions}
+              handleSuggestion={handleSuggestion}
+              feedback={feedback}
+              admin={admin as boolean}
+              loading={loading}
+              getSuggestions={getSuggestions}/>
             <div className="w-full flex gap-2">
               <Textarea
                 placeholder="Add a comment..."
