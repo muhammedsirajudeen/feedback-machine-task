@@ -17,6 +17,7 @@ import { checkUser } from "@/lib/checkUser"
 import axiosInstance from "@/lib/axiosInstance"
 import { toast } from "sonner"
 import { ToastStyles } from "@/lib/utils"
+import Image from "next/image"
 
 export default function SubmitFeedbackPage() {
   const router = useRouter()
@@ -190,11 +191,14 @@ export default function SubmitFeedbackPage() {
                     </div>
                   ) : (
                     <div className="relative">
-                      <img
-                        src={imagePreview || "/placeholder.svg"}
+                      <Image
+                        src={imagePreview}
                         alt="Preview"
                         className="max-h-64 rounded-lg mx-auto"
-                      />
+                        height={100}
+                        width={100}
+                        />
+
                       <Button
                         type="button"
                         variant="destructive"
