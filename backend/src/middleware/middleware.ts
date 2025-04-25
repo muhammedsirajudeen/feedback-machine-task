@@ -14,3 +14,18 @@ export async function userMiddleware(request: CustomRequest, res: Response, next
     next()
 
 }
+export async function adminMiddleware(request: CustomRequest, res: Response, next: NextFunction) {
+    const token = request.headers.authorization
+    if (!token) {
+        res.status(401).json({ message: "unauthorized" })
+        return
+    }
+    const decodedsUser = verifyToken(token) as IUser
+    if (decodedsUser.role !== "admin") {
+        res.status(401).json({ message: "unauthorized" })
+        return
+    }
+    request.user = decodedsUser
+    next()
+
+}

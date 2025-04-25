@@ -10,143 +10,41 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FeedbackItem } from "@/components/feedback-item"
 import { AlertCircle, Search } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Feedback } from "@/types/Feedback"
+import axiosInstance from "@/lib/axiosInstance"
 
-const MOCK_FEEDBACK = [
-  {
-    id: "1",
-    title: "Great customer service",
-    description: "I had an issue with my order and the support team was very helpful in resolving it quickly.",
-    rating: 5,
-    date: "2023-04-20T10:30:00Z",
-    user: "john.doe@example.com",
-    image: null,
-    status: "new",
-    comments: [],
-  },
-  {
-    id: "2",
-    title: "Product quality issues",
-    description:
-      "The product I received had some defects. I would appreciate if someone could contact me about a replacement.",
-    rating: 2,
-    date: "2023-04-18T14:45:00Z",
-    user: "jane.smith@example.com",
-    image: "/placeholder.svg?height=300&width=400",
-    status: "in-progress",
-    comments: [
-      {
-        id: "c1",
-        text: "We're sorry about this issue. Our team will contact you shortly.",
-        date: "2023-04-19T09:15:00Z",
-        author: "admin",
-      },
-    ],
-  },
-  {
-    id: "3",
-    title: "Website navigation is confusing",
-    description: "I found it difficult to navigate through your website. The menu structure could be improved.",
-    rating: 3,
-    date: "2023-04-15T11:20:00Z",
-    user: "robert.johnson@example.com",
-    image: null,
-    status: "resolved",
-    comments: [
-      {
-        id: "c2",
-        text: "Thank you for your feedback. We're working on a new website design.",
-        date: "2023-04-16T10:30:00Z",
-        author: "admin",
-      },
-      {
-        id: "c3",
-        text: "The new design has been implemented. Please let us know if you have any further suggestions.",
-        date: "2023-04-17T14:45:00Z",
-        author: "admin",
-      },
-    ],
-  },
-  {
-    id: "4",
-    title: "Amazing product quality",
-    description: "I'm very impressed with the quality of your products. Will definitely order again!",
-    rating: 5,
-    date: "2023-04-14T16:30:00Z",
-    user: "sarah.williams@example.com",
-    image: null,
-    status: "new",
-    comments: [],
-  },
-  {
-    id: "5",
-    title: "Shipping took too long",
-    description: "My order took over 2 weeks to arrive, which is longer than expected.",
-    rating: 2,
-    date: "2023-04-10T09:15:00Z",
-    user: "michael.brown@example.com",
-    image: null,
-    status: "in-progress",
-    comments: [
-      {
-        id: "c4",
-        text: "We apologize for the delay. We're looking into improving our shipping process.",
-        date: "2023-04-11T13:20:00Z",
-        author: "admin",
-      },
-    ],
-  },
-]
+
 
 export default function AdminPage() {
-  const [feedback, setFeedback] = useState(MOCK_FEEDBACK)
-  const [filteredFeedback, setFilteredFeedback] = useState(MOCK_FEEDBACK)
+  const [feedback, setFeedback] = useState<Feedback[]>([])
+  const [filteredFeedback, setFilteredFeedback] = useState<Feedback[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [ratingFilter, setRatingFilter] = useState("all")
-  const [statusFilter, setStatusFilter] = useState("all")
   const [sortOrder, setSortOrder] = useState("newest")
   const [activeTab, setActiveTab] = useState("all")
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
 
   useEffect(() => {
-    // PLACEHOLDER: API call to fetch feedback
-    // const fetchFeedback = async () => {
-    //   try {
-    //     const response = await fetch('/api/admin/feedback', {
-    //       headers: {
-    //         'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-    //       }
-    //     })
-    //
-    //     if (!response.ok) {
-    //       throw new Error('Failed to fetch feedback')
-    //     }
-    //
-    //     const data = await response.json()
-    //     setFeedback(data)
-    //     setFilteredFeedback(data)
-    //   } catch (err) {
-    //     setError('Failed to load feedback. Please try again.')
-    //     console.error(err)
-    //   } finally {
-    //     setIsLoading(false)
-    //   }
-    // }
 
-    // Simulate API call with mock data
-    setTimeout(() => {
-      setFeedback(MOCK_FEEDBACK)
-      setFilteredFeedback(MOCK_FEEDBACK)
-      setIsLoading(false)
-    }, 1000)
+    async function feedbackFetcher(){
+      try {
+        const response=await axiosInstance.get('/feedback')
+        console.log(response.data)
+        setFeedback(response.data.feedbacks ?? [])
+        setIsLoading(false)
+      } catch (error) {
+        console.log(error)
+        setError('please try again')
+      }
+    }
+    feedbackFetcher()
 
-    // fetchFeedback()
   }, [])
 
   useEffect(() => {
     // Apply filters and sorting
     let result = [...feedback]
-
     // Filter by tab/status
     if (activeTab !== "all") {
       result = result.filter((item) => item.status === activeTab)
@@ -164,7 +62,7 @@ export default function AdminPage() {
         (item) =>
           item.title.toLowerCase().includes(query) ||
           item.description.toLowerCase().includes(query) ||
-          item.user.toLowerCase().includes(query),
+          item.user.email.toLowerCase().includes(query),
       )
     }
 
@@ -184,27 +82,8 @@ export default function AdminPage() {
   }, [feedback, searchQuery, ratingFilter, sortOrder, activeTab])
 
   const handleStatusChange = async (id: string, newStatus: string) => {
-    // PLACEHOLDER: API call to update status
-    // try {
-    //   const response = await fetch(`/api/admin/feedback/${id}/status`, {
-    //     method: 'PUT',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-    //     },
-    //     body: JSON.stringify({ status: newStatus })
-    //   })
-    //
-    //   if (!response.ok) {
-    //     throw new Error('Failed to update status')
-    //   }
-    // } catch (err) {
-    //   console.error(err)
-    //   return
-    // }
 
-    // Update local state
-    const updatedFeedback = feedback.map((item) => (item.id === id ? { ...item, status: newStatus } : item))
+    const updatedFeedback = feedback.map((item) => (item._id === id ? { ...item, status: newStatus } : item))
     setFeedback(updatedFeedback)
   }
 
@@ -241,10 +120,10 @@ export default function AdminPage() {
       author: "admin",
     }
 
-    const updatedFeedback = feedback.map((item) =>
-      item.id === id ? { ...item, comments: [...item.comments, newComment] } : item,
-    )
-    setFeedback(updatedFeedback)
+    // const updatedFeedback = feedback.map((item) =>
+    //   item.id === id ? { ...item, comments: [...item.comments, newComment] } : item,
+    // )
+    // setFeedback(updatedFeedback)
   }
 
   return (
@@ -352,7 +231,7 @@ export default function AdminPage() {
                   <div className="grid gap-4">
                     {filteredFeedback.map((item) => (
                       <FeedbackItem
-                        key={item.id}
+                        key={item._id}
                         feedback={item}
                         onStatusChange={handleStatusChange}
                         onAddComment={handleAddComment}

@@ -11,26 +11,13 @@ import { StarRating } from "@/components/star-rating"
 import { MessageSquare, Send } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { Feedback } from "@/types/Feedback"
+import Image from "next/image"
 
-interface Comment {
-  id: string
-  text: string
-  date: string
-  author: string
-}
+
 
 interface FeedbackItemProps {
-  feedback: {
-    id: string
-    title: string
-    description: string
-    rating: number
-    date: string
-    user: string
-    image: string | null
-    status: string
-    comments: Comment[]
-  }
+  feedback: Feedback
   onStatusChange: (id: string, status: string) => void
   onAddComment: (id: string, comment: string) => void
 }
@@ -57,7 +44,7 @@ export function FeedbackItem({ feedback, onStatusChange, onAddComment }: Feedbac
   }
 
   const handleSubmitComment = () => {
-    onAddComment(feedback.id, newComment)
+    onAddComment(feedback._id, newComment)
     setNewComment("")
   }
 
@@ -69,10 +56,10 @@ export function FeedbackItem({ feedback, onStatusChange, onAddComment }: Feedbac
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-center gap-2">
                 <Avatar className="h-8 w-8">
-                  <AvatarFallback>{getInitials(feedback.user)}</AvatarFallback>
+                  <AvatarFallback>{getInitials(feedback.user.email)}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <div className="font-medium">{feedback.user}</div>
+                  <div className="font-medium">{feedback.user.email}</div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">
                     {formatDistanceToNow(new Date(feedback.date), { addSuffix: true })}
                   </div>
@@ -93,16 +80,18 @@ export function FeedbackItem({ feedback, onStatusChange, onAddComment }: Feedbac
 
             {feedback.image && (
               <div className="mb-4">
-                <img
-                  src={feedback.image || "/placeholder.svg"}
-                  alt="Feedback attachment"
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${feedback.image}`}
+                  height={100}
+                  width={100}
                   className="max-h-48 rounded-lg"
-                />
+                  alt="alt"
+                  />
               </div>
             )}
 
             <div className="flex items-center justify-between">
-              <Select value={feedback.status} onValueChange={(value) => onStatusChange(feedback.id, value)}>
+              <Select value={feedback.status} onValueChange={(value) => onStatusChange(feedback._id, value)}>
                 <SelectTrigger className="w-[140px]">
                   <SelectValue placeholder="Update status" />
                 </SelectTrigger>
@@ -134,7 +123,7 @@ export function FeedbackItem({ feedback, onStatusChange, onAddComment }: Feedbac
                 <h4 className="font-medium mb-2">Comments</h4>
                 <div className="space-y-3">
                   {feedback.comments.map((comment) => (
-                    <div key={comment.id} className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                    <div key={comment._id} className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
                       <div className="flex justify-between mb-1">
                         <span className="font-medium">Admin</span>
                         <span className="text-xs text-gray-500 dark:text-gray-400">

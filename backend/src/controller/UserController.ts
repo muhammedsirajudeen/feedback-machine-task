@@ -76,7 +76,8 @@ export default class UserController {
                 res.status(401).json({ message: 'invalid credentials buddy' })
                 return
             }
-            res.status(200).json({ message: 'success', user: { ...findUser.toObject(), password: undefined } })
+            const token = await signToken({ ...findUser.toObject(), password: undefined })
+            res.status(200).json({ message: 'success', user: { ...findUser.toObject(), password: undefined }, token })
         } catch (error) {
             console.log(error)
             res.status(500).json({ message: "internal server error" })

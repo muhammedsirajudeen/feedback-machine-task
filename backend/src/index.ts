@@ -15,6 +15,7 @@ connectToMongo()
 // Middleware to parse JSON
 app.use(cors())
 app.use(morgan('dev'))
+app.use(express.static('public'))
 app.use(express.json());
 app.use('/user', userRouter)
 app.use('/feedback', FeedbackRoutes)
