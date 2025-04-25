@@ -8,5 +8,6 @@ const FeedbackRoutes = Router()
 
 FeedbackRoutes.post('/', userMiddleware, upload.single('image'), feedbackController.addFeedback.bind(feedbackController))
 FeedbackRoutes.get('/', adminMiddleware, feedbackController.getFeedbacks.bind(feedbackController))
+FeedbackRoutes.patch('/status/:feedbackId', adminMiddleware, feedbackController.ToggleStatus.bind(feedbackController))
 export default FeedbackRoutes
 

@@ -12,6 +12,8 @@ import { AlertCircle, Search } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Feedback } from "@/types/Feedback"
 import axiosInstance from "@/lib/axiosInstance"
+import { toast } from "sonner"
+import { ToastStyles } from "@/lib/utils"
 
 
 
@@ -82,7 +84,13 @@ export default function AdminPage() {
   }, [feedback, searchQuery, ratingFilter, sortOrder, activeTab])
 
   const handleStatusChange = async (id: string, newStatus: string) => {
-
+    try {
+      await axiosInstance.patch(`/feedback/status/${id}`,{status:newStatus})
+      toast.success(<p className="text-white" >status changed</p>,ToastStyles.success)
+    } catch (error) {
+      console.log(error)
+      toast.error(<p className="text-white" >error in changing status</p>,ToastStyles.error)
+    }
     const updatedFeedback = feedback.map((item) => (item._id === id ? { ...item, status: newStatus } : item))
     setFeedback(updatedFeedback)
   }
@@ -90,39 +98,18 @@ export default function AdminPage() {
   const handleAddComment = async (id: string, comment: string) => {
     if (!comment.trim()) return
 
-    // PLACEHOLDER: API call to add comment
-    // try {
-    //   const response = await fetch(`/api/admin/feedback/${id}/comments`, {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-    //     },
-    //     body: JSON.stringify({ text: comment })
-    //   })
-    //
-    //   if (!response.ok) {
-    //     throw new Error('Failed to add comment')
-    //   }
-    //
-    //   const data = await response.json()
-    //   // Use the comment from the response
-    // } catch (err) {
-    //   console.error(err)
-    //   return
-    // }
-
-    // Update local state with a new comment
-    const newComment = {
-      id: `c${Date.now()}`,
-      text: comment,
-      date: new Date().toISOString(),
-      author: "admin",
+    try {
+      // const response=await 
+    } catch (error) {
+      console.log(error)
+      toast.error(<p className="text-white" >error in commenting</p>,ToastStyles.error)
     }
 
+
     // const updatedFeedback = feedback.map((item) =>
-    //   item.id === id ? { ...item, comments: [...item.comments, newComment] } : item,
+    //   item._id === id ? { ...item, comments: [...item.comments, newComment] } : item,
     // )
+    // //@ts-expect-error expect error here dude
     // setFeedback(updatedFeedback)
   }
 

@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 import { IUser } from "../model/User";
 import { FeedbackRepository } from "../repository/FeedbackRepository";
 import { Feedback } from "../model/Feedback";
-import { Model } from "mongoose";
+import { isObjectIdOrHexString, Model } from "mongoose";
 export interface CustomRequest extends Request {
     user?: IUser
 }
@@ -34,6 +34,26 @@ export class FeedbackController {
             const feedbacks = await this.feedbackModel.find().populate([{ path: 'user', select: '-password' }])
             console.log(feedbacks)
             res.status(200).json({ message: "success", feedbacks })
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ message: "internal server error" })
+        }
+    }
+    async ToggleStatus(req: Request, res: Response) {
+        try {
+            const { status } = req.body
+            const { feedbackId } = req.params
+            if (!status || !feedbackId || !isObjectIdOrHexString(feedbackId)) {
+                res.status(400).json({ message: "status is not found" })
+                return
+            }
+            const feeback = await this.feedbackService.findById(feedbackId)
+            if (!feeback) {
+                res.status(404).json({ messaage: "feedback not found" })
+                return
+            }
+            await this.feedbackService.updateById(feedbackId, { status: status })
+            res.status(200).json({ message: "success" })
         } catch (error) {
             console.log(error)
             res.status(500).json({ message: "internal server error" })
