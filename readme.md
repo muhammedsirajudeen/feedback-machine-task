@@ -6,6 +6,7 @@
 A full-stack feedback portal built using the MERN stack (MongoDB, Express.js, React, Node.js) where clients can submit feedback and admins can manage, filter, and respond with optional AI-powered suggestions.
 
 ---
+![image](https://github.com/user-attachments/assets/93b6d101-fa1d-4f30-8db7-99a10d031635)
 
 ## 🚀 Features
 
