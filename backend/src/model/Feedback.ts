@@ -3,7 +3,7 @@ import mongoose, { Schema, Document, Types, ObjectId } from 'mongoose'
 interface Comment {
     text: string
     date: string
-    author: string
+    author: ObjectId
 }
 
 export interface Feedback extends Document {
@@ -20,8 +20,8 @@ export interface Feedback extends Document {
 const CommentSchema: Schema = new Schema<Comment>(
     {
         text: { type: String, required: true },
-        date: { type: String, required: true },
-        author: { type: String, required: true },
+        date: { type: String, required: false, default: Date() },
+        author: { type: mongoose.Schema.ObjectId, required: true, ref: 'User' },
     },
 )
 

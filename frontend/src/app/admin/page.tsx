@@ -14,10 +14,12 @@ import { Feedback } from "@/types/Feedback"
 import axiosInstance from "@/lib/axiosInstance"
 import { toast } from "sonner"
 import { ToastStyles } from "@/lib/utils"
+import { useRouter } from "next/navigation"
 
 
 
 export default function AdminPage() {
+  const router = useRouter()
   const [feedback, setFeedback] = useState<Feedback[]>([])
   const [filteredFeedback, setFilteredFeedback] = useState<Feedback[]>([])
   const [searchQuery, setSearchQuery] = useState("")
@@ -29,9 +31,9 @@ export default function AdminPage() {
 
   useEffect(() => {
 
-    async function feedbackFetcher(){
+    async function feedbackFetcher() {
       try {
-        const response=await axiosInstance.get('/feedback')
+        const response = await axiosInstance.get('/feedback')
         console.log(response.data)
         setFeedback(response.data.feedbacks ?? [])
         setIsLoading(false)
@@ -85,11 +87,11 @@ export default function AdminPage() {
 
   const handleStatusChange = async (id: string, newStatus: string) => {
     try {
-      await axiosInstance.patch(`/feedback/status/${id}`,{status:newStatus})
-      toast.success(<p className="text-white" >status changed</p>,ToastStyles.success)
+      await axiosInstance.patch(`/feedback/status/${id}`, { status: newStatus })
+      toast.success(<p className="text-white" >status changed</p>, ToastStyles.success)
     } catch (error) {
       console.log(error)
-      toast.error(<p className="text-white" >error in changing status</p>,ToastStyles.error)
+      toast.error(<p className="text-white" >error in changing status</p>, ToastStyles.error)
     }
     const updatedFeedback = feedback.map((item) => (item._id === id ? { ...item, status: newStatus } : item))
     setFeedback(updatedFeedback)
@@ -99,18 +101,19 @@ export default function AdminPage() {
     if (!comment.trim()) return
 
     try {
-      // const response=await 
+      const response = await axiosInstance.put(`/feedback/comment/${id}`, { comment: comment })
+      console.log(response.data)
+      const updatedFeedback = feedback.map((item) =>
+        item._id === id && response.data.feedback,
+      )
+      setFeedback(updatedFeedback)
     } catch (error) {
       console.log(error)
-      toast.error(<p className="text-white" >error in commenting</p>,ToastStyles.error)
+      toast.error(<p className="text-white" >error in commenting</p>, ToastStyles.error)
     }
 
 
-    // const updatedFeedback = feedback.map((item) =>
-    //   item._id === id ? { ...item, comments: [...item.comments, newComment] } : item,
-    // )
-    // //@ts-expect-error expect error here dude
-    // setFeedback(updatedFeedback)
+
   }
 
   return (
