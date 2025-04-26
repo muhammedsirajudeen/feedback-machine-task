@@ -121,8 +121,8 @@ export default function AdminPage() {
       const response = await axiosInstance.put(`/feedback/comment/${id}`, { comment: comment })
       console.log(response.data)
       const updatedFeedback = feedback.map((item) =>
-        item._id === id && response.data.feedback,
-      )
+        item._id === id ? response.data.feedback : item
+      );
       setFeedback(updatedFeedback)
     } catch (error) {
       console.log(error)
