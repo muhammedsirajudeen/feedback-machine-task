@@ -61,7 +61,7 @@ export function FeedbackItem({ feedback, onStatusChange, onAddComment,admin }: F
   }
 
   const getInitials = (email: string) => {
-    return email.split("@")[0].substring(0, 2).toUpperCase()
+    return email
   }
 
   const handleSubmitComment = () => {
